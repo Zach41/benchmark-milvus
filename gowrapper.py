@@ -16,6 +16,9 @@ class BenchMarker(Collection):
     def set_gopkg(self, gopkg):
         self._gopkg = gopkg
 
+    def set_total(self, total):
+        self._total = total
+
     def create_index(self, field_name, index_params={}, timeout=None, **kwargs) -> Index:
         self.indexes_set[field_name] = index_params
         return super().create_index(field_name, index_params, timeout, **kwargs)
@@ -44,7 +47,7 @@ class BenchMarker(Collection):
         process = subprocess.Popen(
             cwd=self._gopkg,
             args=['go', 'run', '.', 'locust', '-u', conn.server_address, '-q', json.dumps(data, indent=2),
-            '-s', json.dumps(query_json, indent=2), '-p', str(self._parallel), '-f', 'json', '-t', str(10000)],
+            '-s', json.dumps(query_json, indent=2), '-p', str(self._parallel), '-f', 'json', '-t', str(self._total)],
             stdout=subprocess.PIPE)
         result_raw = process.communicate()[0].decode('utf-8')
         print(result_raw)

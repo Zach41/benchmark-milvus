@@ -59,6 +59,7 @@ def search(coll):
         for vector in f['test']:
             vector_write_array.append(vector.tolist())
         coll.set_parallel(144)
+        coll.set_total(10000)
         i = 0
         for ef in ef_array:
             for k in topKs:
