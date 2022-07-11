@@ -341,3 +341,57 @@ func (h *NumpyObject) ReadUInt64Matrix() ([][]uint64, error) {
 	}
 	return ret, nil
 }
+
+func (h *NumpyObject) ReadFloat32Matrix() ([][]float32, error) {
+	if !h.opened {
+		return nil, fmt.Errorf("object closed")
+	}
+	dims, dtype, err := h.MetaInfo()
+	if err != nil {
+		return nil, err
+	}
+	if dtype != FLOAT32 {
+		return nil, fmt.Errorf("type mismatch")
+	}
+	if len(dims) != 2 || dims[0] <= 0 || dims[1] <= 0 {
+		return nil, fmt.Errorf("invalid dimensions")
+	}
+	buf := make([]float32, dims[0]*dims[1])
+	if _, err := h.Read(&buf); err != nil {
+		return nil, err
+	}
+	ret := make([][]float32, dims[0])
+	offset := 0
+	for i := 0; i < dims[0]; i++ {
+		ret[i] = buf[offset : offset+dims[1]]
+		offset += dims[1]
+	}
+	return ret, nil
+}
+
+func (h *NumpyObject) ReadFloat64Matrix() ([][]float64, error) {
+	if !h.opened {
+		return nil, fmt.Errorf("object closed")
+	}
+	dims, dtype, err := h.MetaInfo()
+	if err != nil {
+		return nil, err
+	}
+	if dtype != FLOAT64 {
+		return nil, fmt.Errorf("type mismatch")
+	}
+	if len(dims) != 2 || dims[0] <= 0 || dims[1] <= 0 {
+		return nil, fmt.Errorf("invalid dimensions")
+	}
+	buf := make([]float64, dims[0]*dims[1])
+	if _, err := h.Read(&buf); err != nil {
+		return nil, err
+	}
+	ret := make([][]float64, dims[0])
+	offset := 0
+	for i := 0; i < dims[0]; i++ {
+		ret[i] = buf[offset : offset+dims[1]]
+		offset += dims[1]
+	}
+	return ret, nil
+}

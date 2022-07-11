@@ -69,3 +69,30 @@ func TestNumpy_partial_read(t *testing.T) {
 	}
 	assert.Equal(t, expected, append(buf0, buf1...))
 }
+
+func TestNumpy_float(t *testing.T) {
+	obj, err := Open("test_float.npy")
+	defer obj.Close()
+	assert.Nil(t, err)
+
+	dims, dataType, err := obj.MetaInfo()
+	assert.Nil(t, err)
+	assert.Equal(t, []int{250, 40}, dims)
+	assert.Equal(t, FLOAT64, dataType)
+
+	data, err := obj.ReadFloat64Matrix()
+	assert.Nil(t, err)
+
+	expected := make([][]float64, 0, 250*40)
+	for i := 0; i < 250; i++ {
+		row := make([]float64, 0, 40)
+		for j := 0; j < 40; j++ {
+			row = append(row, float64(i*40+j))
+		}
+		expected = append(expected, row)
+	}
+	assert.Equal(t, expected, data)
+
+	_, err = obj.ReadInt64Matrix()
+	assert.Error(t, err)
+}
